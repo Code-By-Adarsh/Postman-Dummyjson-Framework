@@ -1,0 +1,431 @@
+{
+	"info": {
+		"_postman_id": "9f974156-3760-42c4-b9ae-9bf8634d3b74",
+		"name": "Users",
+		"description": "In this collection of user, I covered both happy and negative or edge case path. As dummyjson doesn't provide mockapi service and docs section so that our request will not give real impact on server.\n\nI followed this path:\n\n├── 👤 Users  \n│ ├── Happy Path  \n│ │ ├── Get All Users  \n│ │ ├── Get User by ID  \n│ │ ├── Create User  \n│ │ ├── Update User  \n│ │ └── Delete User  \n│ │  \n│ └── Negative & Edge Cases  \n│ ├── Get User - Invalid ID  \n│ ├── Create User - Missing Fields  \n│ ├── Update User - Non Existing ID  \n│ └── Delete User - Already Deleted",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "50452205",
+		"_collection_link": "https://adarsh-qa-7487290.postman.co/workspace/DummyJSON-API-Framework~3fa7330b-701b-444d-b11a-d3e1fc989d14/collection/50452205-9f974156-3760-42c4-b9ae-9bf8634d3b74?action=share&source=collection_link&creator=50452205"
+	},
+	"item": [
+		{
+			"name": "Happy Path",
+			"item": [
+				{
+					"name": "Get All Users",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code must be 200\",()=>{\r",
+									"    pm.expect(pm.response.code).to.eql(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"All users data must be present\",()=>{\r",
+									"    pm.expect(pm.response.json().users).to.be.an(\"array\");\r",
+									"});\r",
+									"\r",
+									"pm.environment.set(\"userId\",pm.response.json().users[17].id)\r",
+									"\r",
+									"const body = pm.response.json().users[17];\r",
+									"pm.environment.set(\"user18\",JSON.stringify(body));"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get User By Id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code must be 200\",()=>{\r",
+									"    pm.expect(pm.response.code).to.eql(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Only user with valid id must be present\",()=>{\r",
+									"    pm.expect(pm.response.json().id).to.eql(pm.environment.get(\"userId\"));\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/{{userId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code must be 201\",()=>{\r",
+									"    pm.expect(pm.response.code).to.eql(201);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"User created successfully\",()=>{\r",
+									"    pm.expect(pm.response.json()).to.include.keys(\"id\",\"firstName\",\"lastName\",\"age\",\"gender\");\r",
+									"});\r",
+									"\r",
+									"pm.environment.set(\"createdUserId\",pm.response.json().id);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstName\":\"ltx\",\r\n    \"lastName\":\"ji\",\r\n    \"age\":20,\r\n    \"gender\":\"male\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users/add",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"add"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const old = JSON.parse(pm.environment.get(\"user18\"));\r",
+									"const updated = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Status code must be 200\",()=>{\r",
+									"    pm.expect(pm.response.code).to.eql(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Name must be updated\",()=>{\r",
+									"    pm.expect(updated.firstName).to.not.eql(old.firstName);\r",
+									"    pm.expect(updated.lastName).to.not.eql(old.lastName);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstName\":\"Virat\",\r\n    \"lastName\":\"Kohli\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users/{{userId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code must be success\",()=>{\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200,204])\r",
+									"})\r",
+									"\r",
+									"pm.test(\"User must be deleted successfully\",()=>{\r",
+									"    const body = pm.response.json();\r",
+									"    pm.expect(body.isDeleted).to.exist;\r",
+									"    pm.expect(body.deletedOn).to.exist;\r",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/{{userId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"{{userId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "In this folder, I covered the entire happy path of user section. As dummyjson doesn't provide mockapi in docs section results in request of create user,updated user and delete user doesn't give impact on real backend server.\n\nI followed this path:\n\n├── Happy Path  \n│ │ ├── Get All Users  \n│ │ ├── Get User by ID  \n│ │ ├── Create User  \n│ │ ├── Update User  \n│ │ └── Delete User"
+		},
+		{
+			"name": "Negative & Edge Cases",
+			"item": [
+				{
+					"name": "Get User - Invalid Id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code must be 404\",()=>{\r",
+									"    pm.expect(pm.response.code).to.eql(404);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Error message must be present\",()=>{\r",
+									"    pm.expect(pm.response.json().error || pm.response.json().message).to.exist;\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/users/209",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"209"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create User - Missing Field",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"API does not reject user with missing field (mock behavior)\", () => {\r",
+									"  pm.expect(pm.response.code).to.eql(201);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users/add",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"add"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update User - Invalid Id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code must be 404\",()=>{\r",
+									"    pm.expect(pm.response.code).to.eql(404);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Error meassage of invalid id must be present\",()=>{\r",
+									"    pm.expect(pm.response.json().error || pm.response.json().message);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"firstName\": \"{{faker.name.firstName}}\",\r\n    \"lastName\": \"{{faker.name.lastName}}\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users/209",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"209"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete User - Invalid Id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code must be 404\",()=>{\r",
+									"    pm.expect(pm.response.code).to.eql(404);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Error meassage of invalid id must be present\",()=>{\r",
+									"    pm.expect(pm.response.json().error || pm.response.json().message);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseUrl}}/users/209",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"users",
+								"209"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "In this folder, I covered the negative & edge case of user section.\n\nI followed this path:\n\n│ └── Negative & Edge Cases  \n│ ├── Get User - Invalid ID  \n│ ├── Create User - Missing Fields  \n│ ├── Update User - Non Existing ID  \n│ └── Delete User - Already Deleted"
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

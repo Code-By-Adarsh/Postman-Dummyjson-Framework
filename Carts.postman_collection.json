@@ -1,0 +1,163 @@
+{
+	"info": {
+		"_postman_id": "6007c9d4-4745-4df5-aac9-39f70856d9d9",
+		"name": "Carts",
+		"description": "In this collection of carts, I covered both happy and negative or edge case path.As dummyjson doesn't provide mockapi service and docs section so that our request will not give real impact on server.\n\nI followed this path:\n\n│ ├── Happy Path  \n│ │ ├── Get Carts  \n│ │ └── Add Product to Cart  \n│ │  \n│ └── Negative Cases  \n│ └── Add Invalid Product to Cart",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "50452205",
+		"_collection_link": "https://adarsh-qa-7487290.postman.co/workspace/DummyJSON-API-Framework~3fa7330b-701b-444d-b11a-d3e1fc989d14/collection/50452205-6007c9d4-4745-4df5-aac9-39f70856d9d9?action=share&source=collection_link&creator=50452205"
+	},
+	"item": [
+		{
+			"name": "Happy Path",
+			"item": [
+				{
+					"name": "Get Carts",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code must be 200\",()=>{\r",
+									"    pm.expect(pm.response.code).to.eql(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Limited 30 carts items must be returned\",()=>{\r",
+									"    const body = pm.response.json().carts;\r",
+									"    let i = 0;\r",
+									"    body.forEach(product=>{\r",
+									"        if(pm.response.json().carts.id);\r",
+									"        i++;\r",
+									"    })\r",
+									"    console.log(\"Total nnumber of items in cart: \"+i);\r",
+									"    pm.expect(i).to.eql(30);\r",
+									"})\r",
+									"\r",
+									"pm.environment.set(\"cartId\",pm.response.json().carts[19].id);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{baseUrl}}/carts",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"carts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add Product to Cart",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code must be 201\",()=>{\r",
+									"    pm.expect(pm.response.code).to.eql(201);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Product must be successfully added in carts\",()=>{\r",
+									"    pm.expect(pm.response.json()).to.include.keys([\"id\",\"products\"]);\r",
+									"})\r",
+									"\r",
+									"pm.environment.set(\"CreatedCartId\",pm.response.json().id);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userId\":{{userId}},\r\n    \"products\":[\r\n        {\r\n            \"id\":100,\r\n            \"quantity\":5\r\n        },{\r\n            \"id\":101,\r\n            \"quantity\":10\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/carts/add",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"carts",
+								"add"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "In this folder of happy path, I covered the happy path requests. In add product to cart request there is no any real impact on backend server as it is not mock.Adding a new cart will not add it into the server.It will simulate a POST request and will return the new created cart with a new id.\n\nI followed this path:\n\n│ ├── Happy Path  \n│ │ ├── Get Carts  \n│ │ └── Add Product to Cart"
+		},
+		{
+			"name": "Negative Path",
+			"item": [
+				{
+					"name": "Add Product with Missing Fields",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code must be 400\",()=>{\r",
+									"    pm.expect(pm.response.code).to.eql(400);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Proper error message of missing fields must be returned\",()=>{\r",
+									"    pm.expect(pm.response.json().error || pm.response.json().message).to.be.exist;\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"userId\":{{userId}},\r\n    \"product\":[\r\n        {\r\n            \"id\":\"\",\r\n            \"quantity\":\"\"\r\n        },{\r\n            \"id\":\"\",\r\n            \"quantity\":\"\"\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/carts/add",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"carts",
+								"add"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "In this folder of negative path, I covered the negative path requests.\n\nI followed this path:\n\n│ └── Negative Cases  \n│ └── Add Invalid Product to Cart"
+		}
+	]
+}

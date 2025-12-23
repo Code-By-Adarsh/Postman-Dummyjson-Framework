@@ -1,0 +1,354 @@
+{
+	"info": {
+		"_postman_id": "514cf455-fdbb-433e-b5fb-29ce04d29940",
+		"name": "Products",
+		"description": "In this collection of products, I covered both happy and negative or edge case path.As dummyjson doesn't provide mockapi service and docs section so that our request will not give real impact on server.\n\nI followed this path:\n\n├── 📦 Products  \n│ ├── Happy Path  \n│ │ ├── Get All Products  \n│ │ ├── Get Product by ID  \n│ │ ├── Create Product  \n│ │ └── Update Product  \n│ │  \n│ └── Negative & Edge Cases  \n│ ├── Get Product - Invalid ID  \n│ └── Create Product - Invalid Data",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "50452205",
+		"_collection_link": "https://adarsh-qa-7487290.postman.co/workspace/DummyJSON-API-Framework~3fa7330b-701b-444d-b11a-d3e1fc989d14/collection/50452205-514cf455-fdbb-433e-b5fb-29ce04d29940?action=share&source=collection_link&creator=50452205"
+	},
+	"item": [
+		{
+			"name": "Happy Path",
+			"item": [
+				{
+					"name": "Get All Products",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code must be 200\",()=>{\r",
+									"    pm.expect(pm.response.code).to.eql(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"All products must be present\",()=>{\r",
+									"    const body = pm.response.json().products;\r",
+									"    let i = 0;\r",
+									"    body.forEach(product=>{\r",
+									"        if(product.id){\r",
+									"            i++;\r",
+									"        }\r",
+									"    })\r",
+									"    console.log(i);\r",
+									"    pm.expect(i).to.eql(30);\r",
+									"});\r",
+									"\r",
+									"pm.environment.set(\"productId\",pm.response.json().products[19].id);\r",
+									"\r",
+									"pm.environment.set(\"product18\",JSON.stringify(pm.response.json().products[19]));"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseUrl}}/products",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Product by Id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code must be 200\",()=>{\r",
+									"    pm.expect(pm.response.code).to.eql(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Valid product must be available\",()=>{\r",
+									"    pm.expect(pm.response.json().id).to.eql(pm.environment.get(\"productId\"));\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseUrl}}/products/{{productId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"products",
+								"{{productId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Product",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code must be 201\",()=>{\r",
+									"    pm.expect(pm.response.code).to.eql(201);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Product created successfully\",()=>{\r",
+									"    const req = [\"title\",\"category\",\"id\"];\r",
+									"    req.forEach(field=>{\r",
+									"        pm.expect(pm.response.json(),'Missing Field:${field}').to.have.property(field);\r",
+									"    });\r",
+									"});\r",
+									"\r",
+									"pm.environment.set(\"createdProductId\",pm.response.json().id);"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\":\"Mail Karo new features\",\r\n    \"category\":\"Digital Service\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/products/add",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"products",
+								"add"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Product",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"const old = JSON.parse(pm.environment.get(\"product18\"));\r",
+									"const updated = pm.response.json();\r",
+									"\r",
+									"pm.test(\"Status code must be 200\",()=>{\r",
+									"    pm.expect(pm.response.code).to.eql(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Product updated successfully\",()=>{\r",
+									"    pm.expect(updated.title).to.not.eql(old.title);\r",
+									"    pm.expect(updated.category).to.not.eql(old.category);\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "PATCH",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\":\"Jalebi\",\r\n    \"category\":\"sweets\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/products/{{productId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"products",
+								"{{productId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Product",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code must be success\",()=>{\r",
+									"    pm.expect(pm.response.code).to.be.oneOf([200,204])\r",
+									"})\r",
+									"\r",
+									"pm.test(\"Product must be deleted successfully\",()=>{\r",
+									"    const body = pm.response.json();\r",
+									"    pm.expect(body.isDeleted).to.exist;\r",
+									"    pm.expect(body.deletedOn).to.exist;\r",
+									"})"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseUrl}}/products/{{productId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"products",
+								"{{productId}}"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "In this folder, I covered the entire happy path of products section. As dummyjson doesn't provide mockapi in docs section results in request of create product,updated product and delete product doesn't give impact on real backend server.\n\nI followed this path:\n\n├── 📦 Products  \n│ ├── Happy Path  \n│ │ ├── Get All Products  \n│ │ ├── Get Product by ID  \n│ │ ├── Create Product  \n│ │ └── Update Product"
+		},
+		{
+			"name": "Negative & Edge Cases",
+			"item": [
+				{
+					"name": "Get Product - Invalid Id",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code must be 404\",()=>{\r",
+									"    pm.expect(pm.response.code).to.eql(404);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Error message of invalid id must be present\",()=>{\r",
+									"    pm.expect(pm.response.json().error || pm.response.json().message).to.exist;\r",
+									"});"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{baseUrl}}/products/{{createdProductId}}",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"products",
+								"{{createdProductId}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Create Product - Missing Fields",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"API does not reject invalid product creation with missing fields (mock behavior)\",()=>{\r",
+									"    pm.expect(pm.response.code).to.eql(201);\r",
+									"});\r",
+									""
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\":\"\",\r\n    \"category\": \"\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseUrl}}/products/add",
+							"host": [
+								"{{baseUrl}}"
+							],
+							"path": [
+								"products",
+								"add"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"description": "In this folder, I covered the negative & edge case of product section.\n\n│ └── Negative & Edge Cases  \n│ ├── Get Product - Invalid ID  \n│ └── Create Product - Invalid Data"
+		}
+	]
+}
